@@ -23,6 +23,7 @@ fs.createReadStream('../data/matches.csv')
         numberFoMatchsPlayedAllSeason(matches)
         numberFoMatchsEachTeamWonEachYear(matches)
         ExtraRunEachTeam2016(matches, deliveries)
+        topEconomicalBowersIn2015(matches, deliveries)
       })
 
 
@@ -78,21 +79,77 @@ function ExtraRunEachTeam2016(matches, deliveries) {
   for (let i = 0; i < matches.length; i++) {
 
     if (matches[i].season == 2016) {
+
       for (let index = 0; index < deliveries.length; index++) {
-           if(matches[i].id === deliveries[index].match_id){
-               if(extraRunsEachTeam[deliveries[index].bowling_team]){
-                    extraRunsEachTeam[deliveries[index].bowling_team] += parseInt(deliveries[index].extra_runs)
-               }else{
-                extraRunsEachTeam[deliveries[index].bowling_team] = parseInt(deliveries[index].extra_runs)
-               }
-           }
+
+        if (matches[i].id === deliveries[index].match_id) {
+
+          if (extraRunsEachTeam[deliveries[index].bowling_team]) {
+
+            extraRunsEachTeam[deliveries[index].bowling_team] += parseInt(deliveries[index].extra_runs)
+
+          } else {
+            extraRunsEachTeam[deliveries[index].bowling_team] = parseInt(deliveries[index].extra_runs)
+          }
+        }
       }
     }
-  
+
 
   }
-  console.log(extraRunsEachTeam)
+  //console.log(extraRunsEachTeam)
 }
+
+
+//Top 10 economical bowlers in the year 2015
+
+
+function topEconomicalBowersIn2015(matches, deliveries) {
+
+  let economicalBowers = {}
+
+  for (let i = 0; i < matches.length; i++) {
+
+    if (matches[i].season == 2015) {
+
+      for (let index = 0; index < deliveries.length; index++) {
+
+        if (matches[i].id === deliveries[index].match_id) {
+
+          if (economicalBowers[deliveries[index].bowler]) {
+
+            economicalBowers[deliveries[index].bowler].balls += 1
+
+            economicalBowers[deliveries[index].bowler].runs += parseInt(deliveries[index].total_runs)
+          } else {
+
+            let runsAndBalls = {}
+
+            runsAndBalls.balls = 1
+
+            runsAndBalls.runs = parseInt(deliveries[index].total_runs)
+            
+            economicalBowers[deliveries[index].bowler] = runsAndBalls
+          }
+        }
+      }
+
+    }
+  }
+  //console.log(economicalBowers)
+  let econonicData = {}
+  for (key in economicalBowers) {
+    let total = Math.floor([economicalBowers[key].runs] / [economicalBowers[key].balls / 6] * 10) / 10
+
+    econonicData[key] = total
+
+  }
+  let result = Object.entries(econonicData).sort((a, b) => a[1] - b[1]).slice(0, 10);
+
+  console.log(result)
+}
+
+
 
 
 
